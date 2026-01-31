@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AccSwap - Interactive Security & Trust Plan</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Calm Harmony (Slate background, Indigo accents, Emerald/Amber for status) -->
+    <!-- Application Structure Plan: A single-page, vertical-scrolling application organized into three thematic, interactive sections: 1. An interactive flowchart for the Escrow System. 2. A side-by-side card view for Account Verification methods. 3. A clickable grid of cards for General Security Pillars. This structure is chosen to transform the static report into a guided, exploratory journey. It visually simplifies complex processes (escrow) and chunks information (security pillars) for better user comprehension and retention, building trust more effectively than a text-only document. -->
+    <!-- Visualization & Content Choices: 
+    - Escrow Flow: (Info -> Explain a Process -> Interactive Vertical Timeline -> Click to reveal details -> Justification: Visualizes the sequence of events, making it easy to follow) -> Implemented with HTML/Tailwind/JS.
+    - Verification Methods: (Info -> Compare -> Side-by-side cards with badges -> Hover for emphasis -> Justification: Clearly contrasts the mandatory vs. optional methods) -> Implemented with HTML/Tailwind.
+    - Security Pillars: (Info -> Organize/Inform -> Interactive Grid of Cards with Icons -> Click to reveal details -> Justification: Breaks a list into digestible, visually appealing chunks) -> Implemented with HTML/Tailwind/JS.
+    - CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc; /* slate-50 */
+            scroll-behavior: smooth;
+        }
+        .step-item.active .step-circle {
+            background-color: #4f46e5; /* indigo-600 */
+            color: white;
+            border-color: #4f46e5;
+        }
+        .step-item.active .step-title {
+            color: #4f46e5; /* indigo-600 */
+        }
+        .security-pillar.active {
+            border-color: #4f46e5; /* indigo-600 */
+            background-color: #eef2ff; /* indigo-50 */
+        }
+    </style>
+</head>
+<body class="text-slate-800">
+
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+        
+        <!-- Header -->
+        <header class="py-12 text-center">
+            <h1 class="text-4xl lg:text-5xl font-bold text-slate-900">Security & Trust at AccSwap</h1>
+            <p class="mt-4 text-lg text-slate-600 max-w-3xl mx-auto">A marketplace for digital assets lives or dies on trust. Explore our interactive guide to see the non-negotiable measures we take to protect buyers, sellers, and the platform itself.</p>
+        </header>
+
+        <!-- Main Content -->
+        <main class="py-12 space-y-24">
+
+            <!-- Section 1: The Escrow System -->
+            <section id="escrow">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl font-bold mb-3">The Escrow System: The Core of Trust</h2>
+                    <p class="text-slate-600 max-w-3xl mx-auto">
+                        The entire payment process revolves around a secure escrow system. This prevents common scams and ensures fairness. Interact with the steps below to see how our user flow protects every transaction from start to finish.
+                    </p>
+                </div>
+                <div class="grid lg:grid-cols-2 gap-12 items-start">
+                    <!-- Interactive Steps -->
+                    <div class="space-y-4">
+                        <div id="escrow-steps-container">
+                            <!-- Steps will be populated by JS -->
+                        </div>
+                    </div>
+                    <!-- Details Panel -->
+                    <div id="escrow-details" class="p-8 bg-white rounded-lg shadow-md border border-slate-200 sticky top-8 min-h-[300px]">
+                        <!-- Details will be populated by JS -->
+                        <p class="text-slate-500">Click on a step to the left to see its details here.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 2: Account Ownership Verification -->
+            <section id="verification">
+                 <div class="text-center mb-12">
+                    <h2 class="text-3xl font-bold mb-3">Account Ownership Verification</h2>
+                    <p class="text-slate-600 max-w-3xl mx-auto">
+                       To prevent fraud and the sale of stolen accounts, we require sellers to prove they own the account they are listing. This is a critical step in maintaining a trustworthy marketplace.
+                    </p>
+                </div>
+                <div class="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+                    <!-- Initial Verification -->
+                    <div class="bg-white p-8 rounded-lg shadow-md border border-slate-200">
+                        <span class="inline-block px-3 py-1 text-sm font-semibold text-emerald-800 bg-emerald-100 rounded-full mb-4">Mandatory</span>
+                        <h3 class="text-xl font-bold mb-2">Initial Verification</h3>
+                        <p class="text-slate-600 mb-4">This is the required first step for all sellers to list an account.</p>
+                        <div class="space-y-3">
+                            <div>
+                                <h4 class="font-semibold">Code-Based Verification</h4>
+                                <p class="text-sm text-slate-500">The platform generates a unique, random code (e.g., `AccSwap-A8B2C`). The seller must post this code in the bio, a post, or a story of the social media account they are selling.</p>
+                            </div>
+                             <div>
+                                <h4 class="font-semibold">Automated Check</h4>
+                                <p class="text-sm text-slate-500">The backend will then attempt to scrape the public profile of the account to find this code. The listing is only approved if the code is found.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Enhanced Verification -->
+                     <div class="bg-white p-8 rounded-lg shadow-md border border-slate-200">
+                        <span class="inline-block px-3 py-1 text-sm font-semibold text-amber-800 bg-amber-100 rounded-full mb-4">Optional but Encouraged</span>
+                        <h3 class="text-xl font-bold mb-2">Enhanced Verification</h3>
+                        <p class="text-slate-600 mb-4">Sellers can complete this step to further increase buyer trust.</p>
+                        <div class="space-y-3">
+                            <div>
+                                <h4 class="font-semibold">Analytics Screenshots</h4>
+                                <p class="text-sm text-slate-500">For platforms like Instagram or YouTube, require sellers to upload recent, un-cropped screenshots of their analytics/demographics page. This helps verify follower quality and engagement claims.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 3: General Platform Security -->
+            <section id="platform-security">
+                 <div class="text-center mb-12">
+                    <h2 class="text-3xl font-bold mb-3">General Platform Security Pillars</h2>
+                    <p class="text-slate-600 max-w-3xl mx-auto">
+                        Beyond transactions and verification, our entire platform is built on a foundation of modern security best practices. Click on each pillar below to learn more about how we protect your data and experience.
+                    </p>
+                </div>
+                <div class="grid lg:grid-cols-2 gap-8 items-start">
+                     <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+                        <div id="security-pillars-container">
+                             <!-- Pillars will be populated by JS -->
+                        </div>
+                    </div>
+                    <div id="security-details" class="p-8 bg-white rounded-lg shadow-md border border-slate-200 sticky top-8 min-h-[200px]">
+                        <!-- Details will be populated by JS -->
+                        <p class="text-slate-500">Click a pillar to see details.</p>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+
+         <footer class="text-center py-12 border-t border-slate-200 mt-12">
+            <p class="text-slate-500">&copy; 2025 AccSwap. Trust, Secured.</p>
+        </footer>
+
+    </div>
+
+    <script>
+        const appData = {
+            escrow: [
+                { title: 'Payment Secured', content: 'The buyer pays AccSwap, not the seller directly. The funds are held by the platform.' },
+                { title: 'Seller Notified', content: 'The platform automatically confirms to the seller that the payment is secured and it\'s safe to proceed.' },
+                { title: 'Account Handover', content: 'The seller transfers account credentials and helps the buyer secure the account (e.g., change email, password, 2FA). This should happen via a secure, on-platform messaging system to keep a record.' },
+                { title: 'Buyer Confirmation', content: 'The buyer has a limited time window (e.g., 24 hours) to confirm they have full control of the account and that it matches the description in the listing. They click a "Confirm Delivery" button on the platform.' },
+                { title: 'Payout', content: 'Only after the buyer\'s confirmation does the platform release the funds to the seller, after deducting the brokerage fee.' },
+            ],
+            security: [
+                { icon: '🌐', title: 'HTTPS/SSL', content: 'All traffic must be encrypted with SSL. This is a basic requirement to protect data in transit.' },
+                { icon: '🔑', title: 'Password Security', content: 'All user passwords must be hashed using a strong, modern algorithm like Argon2 or bcrypt. We never store passwords in plain text.' },
+                { icon: '💳', title: 'Secure Payments', content: 'We integrate with a trusted, PCI-compliant payment provider like Stripe or PayPal. We do not handle or store credit card information directly on our servers.' },
+                { icon: '🛡️', title: 'Brute Force Prevention', content: 'We implement rate limiting on login and password reset pages to prevent attackers from guessing passwords.' },
+                { icon: '💉', title: 'XSS & SQL Injection', content: 'We use a modern framework like Django, which has built-in protections against these common vulnerabilities. Always sanitize user input.' },
+                { icon: '📱', title: 'Two-Factor Auth (2FA)', content: 'We offer 2FA for all user accounts (buyers and sellers) to add an extra layer of security.' },
+            ]
+        };
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const escrowStepsContainer = document.getElementById('escrow-steps-container');
+            const escrowDetailsPanel = document.getElementById('escrow-details');
+            let escrowStepElements = [];
+
+            // Populate Escrow Steps
+            appData.escrow.forEach((step, index) => {
+                const stepEl = document.createElement('div');
+                stepEl.className = 'step-item relative pl-12 pb-8 cursor-pointer border-l-2 border-slate-200';
+                stepEl.innerHTML = `
+                    <div class="step-circle absolute left-[-1.1rem] top-0 flex items-center justify-center w-8 h-8 rounded-full bg-white border-2 border-slate-200 font-bold text-slate-500 transition-colors">${index + 1}</div>
+                    <h3 class="step-title font-bold text-lg text-slate-700 transition-colors">${step.title}</h3>
+                `;
+                stepEl.addEventListener('click', () => {
+                    renderEscrowDetails(index);
+                    escrowStepElements.forEach((el, i) => {
+                         el.classList.toggle('active', i === index);
+                    });
+                });
+                escrowStepsContainer.appendChild(stepEl);
+                escrowStepElements.push(stepEl);
+            });
+            // Remove bottom border from last element
+            if (escrowStepsContainer.lastChild) {
+                escrowStepsContainer.lastChild.classList.remove('pb-8');
+                escrowStepsContainer.lastChild.classList.add('border-l-transparent');
+            }
+
+
+            function renderEscrowDetails(index) {
+                const step = appData.escrow[index];
+                escrowDetailsPanel.innerHTML = `
+                    <span class="text-sm font-bold text-indigo-600">STEP ${index + 1}</span>
+                    <h3 class="text-2xl font-bold mt-1 mb-4">${step.title}</h3>
+                    <p class="text-slate-600 leading-relaxed">${step.content}</p>
+                `;
+                if(index === 4){
+                     escrowDetailsPanel.innerHTML += `<p class="mt-4 p-4 bg-slate-100 rounded-md text-sm text-slate-500"><strong>Dispute Resolution:</strong> If the buyer claims the account is not as described, a dispute resolution process begins. The on-platform message history is crucial evidence here.</p>`;
+                }
+            }
+
+            // Initial state for escrow
+            if(appData.escrow.length > 0){
+                renderEscrowDetails(0);
+                if (escrowStepElements.length > 0) escrowStepElements[0].classList.add('active');
+            }
+
+
+            // Populate Security Pillars
+            const securityPillarsContainer = document.querySelector('#security-pillars-container');
+            const securityDetailsPanel = document.getElementById('security-details');
+            let pillarElements = [];
+
+            appData.security.forEach((pillar, index) => {
+                const pillarEl = document.createElement('div');
+                pillarEl.className = 'security-pillar col-span-1 p-4 rounded-lg border-2 border-transparent cursor-pointer bg-white shadow-sm hover:bg-slate-100 transition-colors';
+                pillarEl.innerHTML = `
+                    <div class="text-3xl">${pillar.icon}</div>
+                    <h4 class="font-semibold mt-2">${pillar.title}</h4>
+                `;
+                pillarEl.addEventListener('click', () => {
+                    renderSecurityDetails(index);
+                    pillarElements.forEach((el, i) => {
+                         el.classList.toggle('active', i === index);
+                    });
+                });
+                securityPillarsContainer.appendChild(pillarEl);
+                pillarElements.push(pillarEl);
+            });
+
+             function renderSecurityDetails(index) {
+                const pillar = appData.security[index];
+                securityDetailsPanel.innerHTML = `
+                    <div class="text-4xl mb-4">${pillar.icon}</div>
+                    <h3 class="text-2xl font-bold mb-4">${pillar.title}</h3>
+                    <p class="text-slate-600 leading-relaxed">${pillar.content}</p>
+                `;
+            }
+
+             // Initial state for security
+            if(appData.security.length > 0){
+                renderSecurityDetails(0);
+                if (pillarElements.length > 0) pillarElements[0].classList.add('active');
+            }
+
+        });
+    </script>
+</body>
+</html>
+

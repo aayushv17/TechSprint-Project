@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en" class="">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>My Dashboard - AccSwap</title>
+    <!-- This includes the same styling and scripts as your main page for a consistent look -->
+    <script>
+    if (localStorage.getItem("theme") === "dark" || (!localStorage.getItem("theme") && window.matchMedia("(prefers-color-scheme: dark)").matches)) {
+        document.documentElement.classList.add("dark");
+    } else {
+        document.documentElement.classList.remove("dark");
+    }
+    </script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .glass { background: rgba(255,255,255,0.12); backdrop-filter: blur(8px); }
+        .btn-animate { transition: transform .22s cubic-bezier(.2,.9,.2,1), box-shadow .2s; }
+        .btn-animate:hover { transform: translateY(-3px) scale(1.02); box-shadow: 0 8px 24px rgba(14,165,233,0.12); }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-sky-50 via-purple-50 to-pink-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-800 text-slate-800 dark:text-slate-200 transition-colors duration-500 min-h-screen">
+
+    <!-- NAV (Mirrors the main page for consistency) -->
+    <nav class="glass shadow-md sticky top-0 z-50 border-b border-slate-200/40 dark:border-slate-700/40">
+        <div class="container mx-auto px-6 py-3 flex justify-between items-center">
+            <a class="text-2xl font-extrabold bg-gradient-to-r from-sky-500 to-purple-500 bg-clip-text text-transparent" href="index.html">AccSwap</a>
+            <div>
+                <a href="index.html" class="px-4 py-2 text-slate-700 dark:text-slate-300 text-sm font-semibold hover:text-sky-500 dark:hover:text-sky-400 transition-colors">Back to Marketplace</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- MAIN -->
+    <main class="container mx-auto px-6 py-12">
+        <h1 class="text-4xl font-extrabold text-slate-800 dark:text-white mb-8">My Purchase History</h1>
+        <div id="purchases-container" class="bg-white dark:bg-slate-800/50 p-6 sm:p-8 rounded-xl shadow-lg border border-slate-200/80 dark:border-slate-700/80">
+            <p class="text-slate-500 dark:text-slate-400">Loading your purchase history...</p>
+        </div>
+    </main>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const API_BASE_URL = 'http://127.0.0.1:8000';
+        const purchasesContainer = document.getElementById('purchases-container');
+        const token = localStorage.getItem('accessToken');
+
+        // Security Check: If the user is not logged in, redirect them to the homepage.
+        if (!token) {
+            window.location.href = './index.html';
+            return; // Stop further execution
+        }
+
+        async function fetchPurchases() {
+            try {
+                // --- THE FIX: Add the Authorization header to the fetch request ---
+                const headers = {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                };
+
+                const response = await fetch(`${API_BASE_URL}/api/transactions/`, { headers: headers });
+                
+                if (response.status === 401) { // Specifically handle token expiration
+                    throw new Error('Your session has expired. Please log in again.');
+                }
+                if (!response.ok) {
+                    throw new Error('Failed to fetch your purchases.');
+                }
+                
+                const transactions = await response.json();
+                renderPurchases(transactions);
+            } catch (error) {
+                console.error("Fetch Purchases Error:", error);
+                purchasesContainer.innerHTML = `<p class="text-red-500">${error.message}</p>`;
+            }
+        }
+
+        function renderPurchases(transactions) {
+            if (!transactions || transactions.length === 0) {
+                purchasesContainer.innerHTML = `<p class="text-slate-500 dark:text-slate-400">You have not made any purchases yet.</p>`;
+                return;
+            }
+
+            let html = '<div class="space-y-6">';
+            transactions.forEach(tx => {
+                const handle = tx.listing ? tx.listing.handle : 'N/A';
+                const platform = tx.listing ? tx.listing.platform : 'N/A';
+                
+                html += `
+                    <div class="border-b dark:border-slate-700 pb-4 last:border-b-0">
+                        <div class="flex flex-wrap justify-between items-center gap-2">
+                            <p class="font-bold text-lg text-slate-800 dark:text-white">${platform} Account: <span class="text-sky-500">@${handle}</span></p>
+                            <span class="text-xs font-medium px-3 py-1 rounded-full ${getStatusColor(tx.status)}">${tx.status.replace(/_/g, ' ').toUpperCase()}</span>
+                        </div>
+                        <div class="text-xs text-slate-500 dark:text-slate-400 mt-1">Transaction ID: ${tx.id} | Date: ${new Date(tx.created_at).toLocaleDateString()}</div>
+                        
+                        ${tx.status === 'delivery_pending' ? `<button class="view-creds-btn mt-3 bg-emerald-500 hover:bg-emerald-600 text-white px-4 py-2 rounded-lg text-sm font-semibold btn-animate" data-tx-id="${tx.id}">View Credentials</button>` : ''}
+                        
+                        ${tx.status === 'admin_review' ? `<p class="mt-2 text-sm text-amber-600 dark:text-amber-400">Our team is currently verifying the account. This usually takes less than 24 hours. We will notify you once the credentials are ready.</p>` : ''}
+                    </div>
+                `;
+            });
+            html += '</div>';
+            purchasesContainer.innerHTML = html;
+        }
+
+        function getStatusColor(status) {
+            switch(status) {
+                case 'complete': return 'bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-300';
+                case 'delivery_pending': return 'bg-sky-100 text-sky-800 dark:bg-sky-900/50 dark:text-sky-300';
+                case 'admin_review': return 'bg-amber-100 text-amber-800 dark:bg-amber-900/50 dark:text-amber-300';
+                case 'cancelled': return 'bg-red-100 text-red-800 dark:bg-red-900/50 dark:text-red-300';
+                default: return 'bg-slate-100 text-slate-800 dark:bg-slate-700 dark:text-slate-300';
+            }
+        }
+        
+        purchasesContainer.addEventListener('click', async (e) => {
+            if (e.target.classList.contains('view-creds-btn')) {
+                const txId = e.target.dataset.txId;
+                try {
+                    const response = await fetch(`${API_BASE_URL}/api/transactions/${txId}/credentials/`, {
+                        headers: { 'Authorization': `Bearer ${token}` }
+                    });
+                    const data = await response.json();
+                    if (!response.ok) throw new Error(data.error);
+                    alert(`Your new password is: ${data.new_password}\n\nPlease log in to the account and change this password immediately!`);
+                } catch (error) {
+                    alert(`Error: ${error.message}`);
+                }
+            }
+        });
+
+        fetchPurchases();
+    });
+    </script>
+</body>
+</html>
+
