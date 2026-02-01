@@ -25,7 +25,7 @@ from io import BytesIO
 
 # ==========================================
 # --- CONFIGURATION ---
-GEMINI_API_KEY = "AIzaSyBQ2fVAF7NqaAXe63jMttJmSzQacSsx0h4"
+GEMINI_API_KEY = "AIzaSyDDj60IJJPq2wIc2AtrX37_pyBliytAV90"
 # ==========================================
 
 # --- CORE VIEWS ---
